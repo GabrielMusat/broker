@@ -66,10 +66,7 @@ def main():
             r = requests.get(Artenea_URL + '/buffer', params=params, auth=(username, password))
             to_send = r.json()
 
-            if to_send['instruction'] == 'None':
-                print('no instructions in buffer')
-
-            else:
+            if not to_send['instruction'] == 'None':
                 print('instruction found on Artenea /buffer:')
                 send_instruction(to_send)
 
