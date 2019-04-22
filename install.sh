@@ -1,5 +1,7 @@
 #!/bin/sh
 
+cd ~/broker
+
 sudo apt update
 
 sudo apt install python3-pip -y
@@ -14,8 +16,8 @@ pip3 install -r requirements.txt
 
 echo "
 #!/usr/bin/env bash
-source /home/pi/broker/venv/bin/activate
-cd /home/pi/broker
+source ~/broker/venv/bin/activate
+cd ~/broker
 python3 broker.py
 " > broker.sh
 
@@ -33,7 +35,7 @@ Description=broker
 User=pi
 ExecStart=/bin/bash /bin/broker
 Restart=on-failure
-WorkingDirectory=/home/pi/broker
+WorkingDirectory=/
 StandardOutput=syslog
 StandardError=syslog
 [Install]
