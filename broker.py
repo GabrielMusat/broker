@@ -71,11 +71,13 @@ async def instruction(data):
 async def main():
     await sio.connect(config['url'], headers={'name': username})
     while True:
+        temp = octoapi.get_tool_dict()
+        job = octoapi.get_completion()
         await sio.emit('status', {
             'user': username,
             'status': {
-                'temp': int(octoapi.get_tool_dict()['tool0']['actual']),
-                'job': int(octoapi.get_completion()) if octoapi.is_printing() else -1
+                'temp': int(temp['tool0']['actual']) if isinstance(temp, dict) else -1,
+                'job': int(octoapi.get_completion()) if isinstance(job, int) and octoapi.is_printing() else -1
             }
         })
         await asyncio.sleep(10)
