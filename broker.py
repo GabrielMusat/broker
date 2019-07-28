@@ -80,7 +80,7 @@ async def main():
             'user': username,
             'status': {
                 'temp': int(temp['tool0']['actual']) if isinstance(temp, dict) else -1,
-                'job': int(octoapi.get_completion()) if isinstance(job, int) and octoapi.is_printing() else -1
+                'job': int(job) if isinstance(job, int) and octoapi.is_printing() else -1
             }
         })
         await asyncio.sleep(10)
