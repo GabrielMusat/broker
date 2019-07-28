@@ -9,7 +9,7 @@ if [[ $# -eq 2 ]]
         exit 1
 fi
 
-cd ~/broker
+cd /home/pi/broker
 
 sudo apt update
 
@@ -25,7 +25,7 @@ pip3 install -r requirements.txt
 
 echo "
 #!/usr/bin/env bash
-cd ~/broker
+cd /home/pi/broker
 source venv/bin/activate
 python3 broker.py $1 $2
 " > broker.sh

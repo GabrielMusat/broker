@@ -46,8 +46,8 @@ def send_instruction(data):
             return 'ok'
 
     except Exception as e:
-        print(f'error sending instruction: {e}')
-        return f'error sending instruction: {e}'
+        print('error sending instruction: {}'.format(str(e)))
+        return 'error sending instruction: {}'.format(str(e))
 
 
 @sio.event
@@ -62,7 +62,7 @@ async def disconnect():
 
 @sio.event
 async def instruction(data):
-    print(f'I just received this instruction: {data}')
+    print('I just received this instruction: {}'.format(data))
     r = send_instruction(data)
     await sio.emit('response', {'user': username, 'response': r})
 
