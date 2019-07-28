@@ -75,12 +75,12 @@ async def main():
     await sio.connect(config['url'], headers={'name': username})
     while True:
         temp = octoapi.get_tool_dict()
-        job = octoapi.get_completion()
+        job = octoapi.get_job_dict()
         await sio.emit('status', {
             'user': username,
             'status': {
                 'temp': int(temp['tool0']['actual']) if isinstance(temp, dict) else -1,
-                'job': int(job) if isinstance(job, int) and octoapi.is_printing() else -1
+                'job': int(job['progress']['completion']) if isinstance(job, dict) and octoapi.is_printing() else -1
             }
         })
         await asyncio.sleep(10)
