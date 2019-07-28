@@ -1,8 +1,8 @@
+import socketio
 import requests
 import json
-import base64
-import socketio
 import octoapi as octoapi
+import base64
 
 config = json.loads(open('config.json').read())
 
