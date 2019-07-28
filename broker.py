@@ -15,10 +15,11 @@ password = sys.argv[2]
 gcodes_folder = config['gcodes_folder']
 
 
-def retrieve_file(filename):
-    params = {'filename': filename}
+def retrieve_file(file):
+    params = {'file': file}
     r = requests.get(config['url'] + '/download', params=params, auth=(username, password), stream=True)
-    with open(gcodes_folder + '/' + filename, 'wb') as f:
+    assert r.status_code == 200, Exception('response {} from server: {}'.format(r.status_code, r.text))
+    with open(gcodes_folder + '/' + file, 'wb') as f:
         for chunk in r.iter_content(chunk_size=1024):
             f.write(chunk)
 
@@ -36,7 +37,7 @@ def send_instruction(data):
             return 'ok'
 
         elif data['instruction'] == 'download':
-            retrieve_file(data['filename'])
+            retrieve_file(data['file'])
             print('file {} uploaded to octoprint'.format(data['file']))
             return 'ok'
 

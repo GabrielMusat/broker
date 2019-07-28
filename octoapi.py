@@ -53,10 +53,10 @@ class OctoPrint_API(object):
 
     @property
     def url(self):
-        return (self.config["OctoPrint_URL"] + "/api/")
+        return self.config["OctoPrint_URL"] + "/api/"
 
     def _load_config(self):
-        config_path = "broker.conf"
+        config_path = "config.json"
         try:
             config_file = open(config_path)
             config = json.loads(config_file.read())
