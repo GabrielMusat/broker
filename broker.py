@@ -3,11 +3,12 @@ import requests
 import json
 import octoapi as octoapi
 import base64
+import asyncio
 
 config = json.loads(open('config.json').read())
 
-sio = socketio.Client()
-sio.connect(config['url'], headers={'Authorization': 'Basic ' + base64.b64encode(f'{config["username"]}:{config["password"]}'.encode()).decode()})
+sio = socketio.AsyncClient()
+
 
 username = config['username']
 password = config['password']
@@ -50,25 +51,34 @@ def send_instruction(data):
 
 
 @sio.event
-def connect():
+async def connect():
     print('I am connected, Yuju!')
 
 
 @sio.event
-def instruction(data):
-    print(f'I just received the next instruction: {data}')
+async def disconnect():
+    print('I have been disconneted, noooooo!')
+
+
+@sio.event
+async def instruction(data):
+    print(f'I just received this instruction: {data}')
     r = send_instruction(data)
-    sio.emit('response', {'user': config['username'], 'response': r})
+    await sio.emit('response', {'user': config['username'], 'response': r})
 
 
-def main():
+async def main():
+    await sio.connect(config['url'], headers={'name': config["username"]})
     while True:
-        sio.emit('status', {
-            'temp': int(octoapi.get_tool_dict()['tool0']['actual']),
-            'job': int(octoapi.get_completion()) if octoapi.is_printing() else -1
+        await sio.emit('status', {
+            'user': config["username"],
+            'status': {
+                'temp': 1,
+                'job': -1
+            }
         })
-        sio.sleep(10)
+        await asyncio.sleep(10)
 
 
 if __name__ == '__main__':
-    main()
+    asyncio.get_event_loop().run_until_complete(main())
