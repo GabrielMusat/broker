@@ -1,0 +1,8 @@
+ {
+    "OctoAPI_KEY": "88DD146E34CD473E80728974379AF8E1",
+    "OctoPrint_URL": "http://ulab.local",
+    "url": "http://localhost:8000",
+    "gcodes_folder": "/home/pi/.octoprint/uploads",
+    "username": "Carmen",
+    "password": "contrasenaC"
+}
