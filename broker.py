@@ -1,80 +1,69 @@
-#!/usr/bin/env python
-
-
+import socketio
 import requests
 import json
-import octoapi as octoapi
-import time
+import base64
 
-config = json.loads(open('broker.conf').read())
+config = json.loads(open('config.json').read())
 
+sio = socketio.Client()
+sio.connect(config['url'], headers={'Authorization': 'Basic ' + base64.b64encode(f'{config["username"]}:{config["password"]}'.encode()).decode()})
 
 username = config['username']
 password = config['password']
-Artenea_URL = config['Artenea_URL']
 gcodes_folder = config['gcodes_folder']
 
 
 def retrieve_file(filename):
     params = {'filename': filename}
-    r = requests.get(Artenea_URL + '/download', params=params, auth=(username, password), stream=True)
+    r = requests.get(config['url'] + '/download', params=params, auth=(username, password), stream=True)
     with open(gcodes_folder + '/' + filename, 'wb') as f:
         for chunk in r.iter_content(chunk_size=1024):
             f.write(chunk)
 
 
-def temp():
-    return int(octoapi.get_tool_dict()['tool0']['actual'])
-
-
-def print_percentage():
-    if octoapi.is_printing():
-        return int(octoapi.get_completion())
-    else:
-        return -1
-
-
-def send_instruction(to_send):
-    instruction = to_send['instruction']
-
+def send_instruction(data):
     try:
-        if instruction == 'home':
-            octoapi.post_home()
+        if data['instruction'] == 'home':
             print('homing...')
+            return 'ok'
 
-        elif instruction == 'print':
-            octoapi.post_print(to_send['file'])
-            print('printing file "{}"'.format(to_send['file']))
+        elif data['instruction'] == 'print':
+            print('printing file "{}"'.format(data['file']))
+            return 'ok'
 
-        elif instruction == 'download':
-            retrieve_file(to_send['filename'])
-            print('file {} uploaded to octoprint'.format(to_send['filename']))
+        elif data['instruction'] == 'download':
+            retrieve_file(data['filename'])
+            print('file {} uploaded to octoprint'.format(data['file']))
+            return 'ok'
 
-        elif instruction == 'command':
-            octoapi.post_command(to_send['command'])
-            print('executing command {}'.format(to_send['command']))
+        elif data['instruction'] == 'command':
+            print('executing command {}'.format(data['command']))
+            return 'ok'
 
     except Exception as e:
-        print('imposible to connect to octoprint')
-        print(e)
+        print(f'error sending instruction: {e}')
+        return f'error sending instruction: {e}'
+
+
+@sio.event
+def connect():
+    print('I am connected, Yuju!')
+
+
+@sio.event
+def instruction(data):
+    print(f'I just received the next instruction: {data}')
+    r = send_instruction(data)
+    sio.emit('response', {'user': config['username'], 'response': r})
 
 
 def main():
     while True:
-        try:
-            params = {'temp': temp(), 'job': print_percentage()}
-            r = requests.get(Artenea_URL + '/buffer', params=params, auth=(username, password))
-            to_send = r.json()
-
-            if not to_send['instruction'] == 'None':
-                print('instruction found on Artenea /buffer:')
-                send_instruction(to_send)
-
-        except Exception as e:
-            print('Unable to send instruction to Artenea server, retrying...')
-            print(e)
-
-        time.sleep(1)
+        sio.emit('status', {
+            'temp': 1,
+            'job': -1
+        })
+        sio.sleep(10)
 
 
 if __name__ == '__main__':
