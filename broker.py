@@ -27,12 +27,14 @@ def retrieve_file(file):
 def send_instruction(data):
     try:
         if data['instruction'] == 'home':
-            octoapi.post_home()
+            r = octoapi.post_home()
+            assert r.status_code == 200, Exception(r.text)
             print('homing...')
             return 'ok'
 
         elif data['instruction'] == 'print':
-            octoapi.post_print(data['file'])
+            r = octoapi.post_print(data['file'])
+            assert r.status_code == 200, Exception(r.text)
             print('printing file "{}"'.format(data['file']))
             return 'ok'
 
@@ -42,7 +44,8 @@ def send_instruction(data):
             return 'ok'
 
         elif data['instruction'] == 'command':
-            octoapi.post_command(data['command'])
+            r = octoapi.post_command(data['command'])
+            assert r.status_code == 200, Exception(r.text)
             print('executing command {}'.format(data['command']))
             return 'ok'
 
