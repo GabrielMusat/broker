@@ -18,7 +18,7 @@ gcodes_folder = config['gcodes_folder']
 def retrieve_file(file):
     params = {'file': file}
     r = requests.get(config['url'] + '/download', params=params, auth=(username, password), stream=True)
-    assert r.status_code == 200, Exception(f'response {r.status_code} from server: {r.text}')
+    assert r.status_code == 200, Exception('response {} from server: {}'.format(r.status_code, r.text))
     with open(gcodes_folder + '/' + file, 'wb') as f:
         for chunk in r.iter_content(chunk_size=1024):
             f.write(chunk)
