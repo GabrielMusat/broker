@@ -75,7 +75,11 @@ async def main():
     await sio.connect(config['url'], headers={'name': username})
     while True:
         temp = octoapi.get_tool_dict()
+        temp = int(temp['tool0']['actual']) if isinstance(temp, dict) else -1
+        printing = octoapi.get_printer_dict()
+        printing = printing["state"]["flags"]["printing"] if isinstance(printing, dict) else False
         job = octoapi.get_job_dict()
+        job = int(job['progress']['completion']) if isinstance(job, dict) and printing else -1
         await sio.emit('status', {
             'user': username,
             'status': {
