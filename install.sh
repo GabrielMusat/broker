@@ -1,5 +1,14 @@
 #!/bin/sh
 
+if [[ $# -eq 2 ]]
+    then
+        echo "username will be $1"
+        echo "password will be $2"
+    else
+        echo "username and password must be provided as arguments"
+        exit 1
+fi
+
 cd ~/broker
 
 sudo apt update
@@ -16,9 +25,9 @@ pip3 install -r requirements.txt
 
 echo "
 #!/usr/bin/env bash
-source ~/broker/venv/bin/activate
 cd ~/broker
-python3 broker.py
+source venv/bin/activate
+python3 broker.py $1 $2
 " > broker.sh
 
 sudo chmod +x broker.sh
@@ -32,7 +41,7 @@ sudo echo "
 [Unit]
 Description=broker
 [Service]
-User=pi
+User=root
 ExecStart=/bin/bash /bin/broker
 Restart=on-failure
 WorkingDirectory=/

@@ -1,8 +1,8 @@
 import socketio
 import requests
 import json
+import sys
 import octoapi as octoapi
-import base64
 import asyncio
 
 config = json.loads(open('config.json').read())
@@ -10,8 +10,8 @@ config = json.loads(open('config.json').read())
 sio = socketio.AsyncClient()
 
 
-username = config['username']
-password = config['password']
+username = sys.argv[1]
+password = sys.argv[2]
 gcodes_folder = config['gcodes_folder']
 
 
@@ -64,14 +64,14 @@ async def disconnect():
 async def instruction(data):
     print(f'I just received this instruction: {data}')
     r = send_instruction(data)
-    await sio.emit('response', {'user': config['username'], 'response': r})
+    await sio.emit('response', {'user': username, 'response': r})
 
 
 async def main():
-    await sio.connect(config['url'], headers={'name': config["username"]})
+    await sio.connect(config['url'], headers={'name': username})
     while True:
         await sio.emit('status', {
-            'user': config["username"],
+            'user': username,
             'status': {
                 'temp': 1,
                 'job': -1
