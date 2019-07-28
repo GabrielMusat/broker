@@ -1,1 +1,4 @@
 requests
+python-socketio
+aiohttp
+websockets
