@@ -73,8 +73,8 @@ async def main():
         await sio.emit('status', {
             'user': username,
             'status': {
-                'temp': 1,
-                'job': -1
+                'temp': int(octoapi.get_tool_dict()['tool0']['actual']),
+                'job': int(octoapi.get_completion()) if octoapi.is_printing() else -1
             }
         })
         await asyncio.sleep(10)
