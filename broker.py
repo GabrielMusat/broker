@@ -78,7 +78,7 @@ async def main():
             break
         except Exception as e:
             print('error connecting to server: {}'.format(str(e)))
-        await asyncio.sleep(1)
+        await asyncio.sleep(5)
     while True:
         temp = octoapi.get_tool_dict()
         temp = int(temp['tool0']['actual']) if isinstance(temp, dict) else -1
