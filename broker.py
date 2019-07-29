@@ -72,7 +72,13 @@ async def instruction(data):
 
 
 async def main():
-    await sio.connect(config['url'], headers={'name': username})
+    while True:
+        try:
+            await sio.connect(config['url'], headers={'name': username})
+            break
+        except Exception as e:
+            print('error connecting to server: {}'.format(str(e)))
+        await asyncio.sleep(1)
     while True:
         temp = octoapi.get_tool_dict()
         temp = int(temp['tool0']['actual']) if isinstance(temp, dict) else -1
