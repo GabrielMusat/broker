@@ -63,7 +63,7 @@ def send_instruction(data):
             return 'ok'
 
         elif data['instruction'] == 'unload':
-            print(f'unloading filament...')
+            print('unloading filament...')
             for command in ['M109 S210', 'G92 E0', 'G1 E15 F150', 'G1 E-135 F300', 'M109 S0']:
                 print('executing command {}'.format(command))
                 r = octoapi.post_command(command)
@@ -72,7 +72,7 @@ def send_instruction(data):
             return 'ok'
 
         elif data['instruction'] == 'load':
-            print(f'loading filament...')
+            print('loading filament...')
             for command in ['M109 S210', 'G92 E0', 'G1 E100 F150', 'M109 S0']:
                 print('executing command {}'.format(command))
                 r = octoapi.post_command(command)
