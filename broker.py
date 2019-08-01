@@ -27,27 +27,60 @@ def retrieve_file(file):
 def send_instruction(data):
     try:
         if data['instruction'] == 'home':
+            print('homing...')
             r = octoapi.post_home()
             assert r.status_code == 200, Exception(r.text)
-            print('homing...')
+            print('home ok')
             return 'ok'
 
         elif data['instruction'] == 'print':
+            print('printing file "{}"'.format(data['file']))
             r = octoapi.post_print(data['file'])
             assert r.status_code == 200, Exception(r.text)
-            print('printing file "{}"'.format(data['file']))
+            print('print ok')
             return 'ok'
 
         elif data['instruction'] == 'download':
             retrieve_file(data['file'])
             print('file {} uploaded to octoprint'.format(data['file']))
+            print('download ok')
+            return 'ok'
+
+        elif data['instruction'] == 'move':
+            print('moving axis {} {}mm'.format(data['axis'], data['distance']))
+            for command in ['G91', 'G1 {}{} F1000'.format(data['axis'], data['distance']), 'G90']:
+                print('executing command {}'.format(command))
+                r = octoapi.post_command(command)
+                assert r.status_code == 200, Exception(r.text)
+            print('move ok')
             return 'ok'
 
         elif data['instruction'] == 'command':
+            print('executing command {}'.format(data['command']))
             r = octoapi.post_command(data['command'])
             assert r.status_code == 200, Exception(r.text)
-            print('executing command {}'.format(data['command']))
+            print('command ok')
             return 'ok'
+
+        elif data['instruction'] == 'unload':
+            print(f'unloading filament...')
+            for command in ['M109 S210', 'G92 E0', 'G1 E15 F150', 'G1 E-135 F300', 'M109 S0']:
+                print('executing command {}'.format(command))
+                r = octoapi.post_command(command)
+                assert r.status_code == 200, Exception('error executing command {}: {}'.format(command, r.text))
+            print('unload ok')
+            return 'ok'
+
+        elif data['instruction'] == 'load':
+            print(f'loading filament...')
+            for command in ['M109 S210', 'G92 E0', 'G1 E100 F150', 'M109 S0']:
+                print('executing command {}'.format(command))
+                r = octoapi.post_command(command)
+                assert r.status_code == 200, Exception('error executing command {}: {}'.format(command, r.text))
+            print('load ok')
+            return 'ok'
+        else:
+            raise Exception('instruction {} not understood'.format(data['instruction']))
 
     except Exception as e:
         print('error sending instruction: {}'.format(str(e)))
