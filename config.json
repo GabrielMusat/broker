@@ -1,6 +1,6 @@
 {
     "OctoAPI_KEY": "",
-    "OctoPrint_URL": "http://ulab.local",
-    "url": "http://localhost:8000",
+    "OctoPrint_URL": "http://localhost",
+    "url": "http://beast.local:8000",
     "gcodes_folder": "/home/pi/.octoprint/uploads"
 }
