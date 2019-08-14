@@ -29,7 +29,7 @@ def send_instruction(data):
         if data['instruction'] == 'home':
             print('homing...')
             r = octoapi.post_home()
-            assert r.status_code == 200, Exception(r.text)
+            assert r.status_code == 200, Exception(r.status_code)
             print('home ok')
             return 'ok'
 
