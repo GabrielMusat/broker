@@ -120,6 +120,7 @@ async def main():
         temp = octoapi.get_tool_dict()
         temp = int(temp['tool0']['actual']) if isinstance(temp, dict) and 'tool0' in temp else -1
         printing = octoapi.get_printer_dict()
+        print(printing)
         printing = printing["state"]["flags"]["printing"] if isinstance(printing, dict) and 'state' in printing else False
         job = octoapi.get_job_dict()
         job = int(job['progress']['completion']) if isinstance(job, dict) and 'progress' in job and printing else -1
