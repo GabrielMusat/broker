@@ -113,7 +113,9 @@ async def main():
             print('error connecting to server: {}'.format(str(e)))
         await asyncio.sleep(5)
     while True:
-        status = octoapi.get_connection_dict()['state']
+        status = octoapi.get_connection_dict()
+        print(status)
+        status = status['state']
         if status != 'Operational':
             octoapi.post_connect()
         temp = octoapi.get_tool_dict()
