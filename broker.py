@@ -104,16 +104,6 @@ async def instruction(data):
     await sio.emit('response', {'user': username, 'response': r})
 
 
-async def connectToPrinter():
-    while True:
-        try:
-            print(octoapi.get_connection_dict())
-            # octoapi.post_connect()
-        except Exception as e:
-            pass
-        await asyncio.sleep(5)
-
-
 async def main():
     while True:
         try:
@@ -123,6 +113,9 @@ async def main():
             print('error connecting to server: {}'.format(str(e)))
         await asyncio.sleep(5)
     while True:
+        status = octoapi.get_connection_dict()['state']
+        if status != 'Operational':
+            octoapi.post_connect()
         temp = octoapi.get_tool_dict()
         temp = int(temp['tool0']['actual']) if isinstance(temp, dict) and 'tool0' in temp else -1
         printing = octoapi.get_printer_dict()
@@ -133,12 +126,12 @@ async def main():
             'user': username,
             'status': {
                 'temp': temp,
-                'job': job
+                'job': job,
+                'status': status
             }
         })
         await asyncio.sleep(10)
 
 
 if __name__ == '__main__':
-    asyncio.ensure_future(connectToPrinter())
     asyncio.get_event_loop().run_until_complete(main())
