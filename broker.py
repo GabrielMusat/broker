@@ -114,11 +114,11 @@ async def main():
         await asyncio.sleep(5)
     while True:
         temp = octoapi.get_tool_dict()
-        temp = int(temp['tool0']['actual']) if isinstance(temp, dict) else -1
+        temp = int(temp['tool0']['actual']) if isinstance(temp, dict) and 'tool0' in temp else -1
         printing = octoapi.get_printer_dict()
-        printing = printing["state"]["flags"]["printing"] if isinstance(printing, dict) else False
+        printing = printing["state"]["flags"]["printing"] if isinstance(printing, dict) and 'state' in printing else False
         job = octoapi.get_job_dict()
-        job = int(job['progress']['completion']) if isinstance(job, dict) and printing else -1
+        job = int(job['progress']['completion']) if isinstance(job, dict) and 'progress' in job and printing else -1
         await sio.emit('status', {
             'user': username,
             'status': {
