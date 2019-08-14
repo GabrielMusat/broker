@@ -104,6 +104,16 @@ async def instruction(data):
     await sio.emit('response', {'user': username, 'response': r})
 
 
+async def connectToPrinter():
+    while True:
+        try:
+            print(octoapi.get_connection_dict())
+            # octoapi.post_connect()
+        except Exception as e:
+            pass
+        await asyncio.sleep(5)
+
+
 async def main():
     while True:
         try:
@@ -130,4 +140,5 @@ async def main():
 
 
 if __name__ == '__main__':
+    asyncio.create_task(connectToPrinter())
     asyncio.get_event_loop().run_until_complete(main())
