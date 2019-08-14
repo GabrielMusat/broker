@@ -114,8 +114,7 @@ async def main():
         await asyncio.sleep(5)
     while True:
         status = octoapi.get_connection_dict()
-        print(status)
-        status = status['state']
+        status = status['current']['state']
         if status != 'Operational':
             octoapi.post_connect()
         temp = octoapi.get_tool_dict()
