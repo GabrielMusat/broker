@@ -118,7 +118,7 @@ async def main():
         if not isinstance(printer_status, dict):
             await sio.emit('status', {'user': username, 'status': {'hotend': 0, 'bed': 0, 'job': -1, 'status': 'disconnected'}})
             octoapi.post_connect()
-            await asyncio.sleep(10)
+            await asyncio.sleep(3)
             continue
         hotend = printer_status['temperature']['tool0']['actual'] if 'tool0' in printer_status['temperature'] else 0
         bed = printer_status['temperature']['bed']['actual'] if 'bed' in printer_status['temperature'] else 0
@@ -137,7 +137,7 @@ async def main():
                 'status': status
             }
         })
-        await asyncio.sleep(10)
+        await asyncio.sleep(3)
 
 
 if __name__ == '__main__':
