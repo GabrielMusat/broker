@@ -29,14 +29,14 @@ def send_instruction(data):
         if data['instruction'] == 'home':
             print('homing...')
             r = octoapi.post_home()
-            assert r.status_code == 200, Exception(r.status_code)
+            assert r.status_code == 204, Exception(r.text)
             print('home ok')
             return 'ok'
 
         elif data['instruction'] == 'print':
             print('printing file "{}"'.format(data['file']))
             r = octoapi.post_print(data['file'])
-            assert r.status_code == 200, Exception(r.text)
+            assert r.status_code == 204, Exception(r.text)
             print('print ok')
             return 'ok'
 
@@ -51,14 +51,14 @@ def send_instruction(data):
             for command in ['G91', 'G1 {}{} F1000'.format(data['axis'], data['distance']), 'G90']:
                 print('executing command {}'.format(command))
                 r = octoapi.post_command(command)
-                assert r.status_code == 200, Exception(r.text)
+                assert r.status_code == 204, Exception(r.text)
             print('move ok')
             return 'ok'
 
         elif data['instruction'] == 'command':
             print('executing command {}'.format(data['command']))
             r = octoapi.post_command(data['command'])
-            assert r.status_code == 200, Exception(r.text)
+            assert r.status_code == 204, Exception(r.text)
             print('command ok')
             return 'ok'
 
@@ -67,7 +67,7 @@ def send_instruction(data):
             for command in ['M109 S210', 'G92 E0', 'G1 E15 F150', 'G1 E-135 F300', 'M109 S0']:
                 print('executing command {}'.format(command))
                 r = octoapi.post_command(command)
-                assert r.status_code == 200, Exception('error executing command {}: {}'.format(command, r.text))
+                assert r.status_code == 204, Exception('error executing command {}: {}'.format(command, r.text))
             print('unload ok')
             return 'ok'
 
@@ -76,7 +76,7 @@ def send_instruction(data):
             for command in ['M109 S210', 'G92 E0', 'G1 E100 F150', 'M109 S0']:
                 print('executing command {}'.format(command))
                 r = octoapi.post_command(command)
-                assert r.status_code == 200, Exception('error executing command {}: {}'.format(command, r.text))
+                assert r.status_code == 204, Exception('error executing command {}: {}'.format(command, r.text))
             print('load ok')
             return 'ok'
         else:
