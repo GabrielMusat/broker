@@ -115,7 +115,7 @@ async def main():
     while True:
         status = octoapi.get_connection_dict()
         status = status['current']['state']
-        if status != 'Operational':
+        if status == 'Closed':
             octoapi.post_connect()
         temp = octoapi.get_tool_dict()
         temp = int(temp['tool0']['actual']) if isinstance(temp, dict) and 'tool0' in temp else -1
