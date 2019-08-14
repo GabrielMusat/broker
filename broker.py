@@ -112,22 +112,22 @@ async def main():
         except Exception as e:
             print('error connecting to server: {}'.format(str(e)))
         await asyncio.sleep(5)
+
     while True:
-        status = octoapi.get_connection_dict()
-        status = status['current']['state']
+        printer_status = octoapi.get_printer_dict()
+        hotend = printer_status['temperature']['tool0']['actual'] if 'tool0' in printer_status['temperature'] else 0
+        bed = printer_status['temperature']['bed']['actual'] if 'bed' in printer_status['temperature'] else 0
+        printing = printer_status["state"]["flags"]["printing"]
+        status = printer_status['state']['text']
         if status == 'Closed':
             octoapi.post_connect()
-        temp = octoapi.get_tool_dict()
-        temp = int(temp['tool0']['actual']) if isinstance(temp, dict) and 'tool0' in temp else -1
-        printing = octoapi.get_printer_dict()
-        print(printing)
-        printing = printing["state"]["flags"]["printing"] if isinstance(printing, dict) and 'state' in printing else False
         job = octoapi.get_job_dict()
-        job = int(job['progress']['completion']) if isinstance(job, dict) and 'progress' in job and printing else -1
+        job = job['progress']['completion'] if 'progress' in job and printing else -1
         await sio.emit('status', {
             'user': username,
             'status': {
-                'temp': temp,
+                'hotend': hotend,
+                'bed': bed,
                 'job': job,
                 'status': status
             }
