@@ -128,7 +128,7 @@ async def main():
             printer_status = None
 
         if not isinstance(printer_status, dict):
-            await sio.emit('status', {'user': username, 'status': {'hotend': 0, 'bed': 0, 'job': -1, 'status': 'Disconnected'}})
+            await sio.emit('status', {'user': username, 'status': {'hotend': 0, 'bed': 0, 'job': -1, 'file': None, 'status': 'Disconnected'}})
             if printer_status is not None: octoapi.post_connect()
             await asyncio.sleep(3)
             continue
@@ -138,14 +138,16 @@ async def main():
         status = printer_status['state']['text']
         if status == 'Closed':
             octoapi.post_connect()
-        job = octoapi.get_job_dict()
-        job = job['progress']['completion'] if 'progress' in job and printing else -1
+        job_dict = octoapi.get_job_dict()
+        job = job_dict['progress']['completion'] if 'progress' in job_dict and printing else -1
+        file = job_dict['file']['name'] if 'file' in job_dict and printing else None
         await sio.emit('status', {
             'user': username,
             'status': {
                 'hotend': hotend,
                 'bed': bed,
                 'job': job,
+                'file': file,
                 'status': status
             }
         })
