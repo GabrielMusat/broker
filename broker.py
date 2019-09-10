@@ -40,6 +40,13 @@ def send_instruction(data):
             print('print ok')
             return 'ok'
 
+        elif data['instruction'] == 'cancel':
+            print('cancelling print')
+            r = octoapi.post_cancel()
+            assert r.status_code == 204, Exception(r.text)
+            print('cancel ok')
+            return 'ok'
+
         elif data['instruction'] == 'download':
             retrieve_file(data['file'])
             print('file {} uploaded to octoprint'.format(data['file']))
