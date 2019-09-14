@@ -128,7 +128,9 @@ async def main():
             printer_status = None
 
         if not isinstance(printer_status, dict):
+            print('printer status is not a dict: {}'.format(printer_status))
             await sio.emit('status', {'user': username, 'status': {'hotend': 0, 'bed': 0, 'job': -1, 'file': None, 'status': 'Disconnected'}})
+            print('reconnecting...')
             if printer_status is not None: octoapi.post_connect()
             await asyncio.sleep(10)
             continue
