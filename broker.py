@@ -143,6 +143,7 @@ async def main():
         job_dict = octoapi.get_job_dict()
         job = job_dict['progress']['completion'] if 'progress' in job_dict and printing else -1
         file = job_dict['job']['file']['name'] if 'job' in job_dict and printing else None
+        print(status)
         await sio.emit('status', {
             'user': username,
             'status': {
