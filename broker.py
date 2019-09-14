@@ -131,7 +131,7 @@ async def main():
             print('printer status is not a dict: {}'.format(printer_status))
             await sio.emit('status', {'user': username, 'status': {'hotend': 0, 'bed': 0, 'job': -1, 'file': None, 'status': 'Disconnected'}})
             print('reconnecting...')
-            if printer_status is not None: octoapi.post_connect()
+            if printer_status is not None: octoapi.post_connect(baudrate=250000)
             await asyncio.sleep(10)
             continue
         hotend = printer_status['temperature']['tool0']['actual'] if 'tool0' in printer_status['temperature'] else 0
@@ -139,7 +139,7 @@ async def main():
         printing = printer_status["state"]["flags"]["printing"]
         status = printer_status['state']['text']
         if status == 'Closed':
-            octoapi.post_connect()
+            octoapi.post_connect(baudrate=250000)
         job_dict = octoapi.get_job_dict()
         job = job_dict['progress']['completion'] if 'progress' in job_dict and printing else -1
         file = job_dict['job']['file']['name'] if 'job' in job_dict and printing else None
