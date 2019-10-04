@@ -2,11 +2,13 @@ import socketio
 import requests
 import json
 import sys
+import os
 import octoapi as octoapi
 import asyncio
 
 config = json.loads(open('config.json').read())
-
+if not os.path.isfile('store.json'):
+    json.dump({"init_gcode": ""}, open('store.json', 'w'))
 sio = socketio.AsyncClient()
 
 
@@ -33,8 +35,21 @@ def send_instruction(data):
             print('home ok')
             return 'ok'
 
+        if data['instruction'] == 'set_init_gcode':
+            print('setting init gcode to {}'.format(data['gcode']))
+            store = json.load(open('store.json'))
+            print('previous gcode: {}'.format(str(store)))
+            store['init_gcode'] = data['gcode']
+            json.dump(store, open('store.json', 'w'))
+            print('changed')
+            return 'ok'
+
         elif data['instruction'] == 'print':
             print('printing file "{}"'.format(data['file']))
+            init_gcode = json.load(open('store.json'))['init_gcode']
+            if len(init_gcode):
+                r = octoapi.post_command(init_gcode)
+                assert r.status_code == 204, Exception('error executing init gcode: {}'.format(r.text))
             r = octoapi.post_print(data['file'])
             assert r.status_code == 204, Exception(r.text)
             print('print ok')
@@ -44,6 +59,8 @@ def send_instruction(data):
             print('cancelling print')
             r = octoapi.post_cancel()
             assert r.status_code == 204, Exception(r.text)
+            r = octoapi.post_command('G1 Z140')
+            assert r.status_code == 204, Exception('error moving bed to Z140: {}'.format(r.text))
             print('cancel ok')
             return 'ok'
 
@@ -71,7 +88,7 @@ def send_instruction(data):
 
         elif data['instruction'] == 'unload':
             print('unloading filament...')
-            for command in ['M109 S210', 'G92 E0', 'G1 E15 F150', 'G1 E-135 F300', 'M109 S0']:
+            for command in ['M109 S210', 'G28', 'G1 Z140', 'G92 E0', 'G1 E15 F150', 'G1 E-135 F300', 'M109 S0']:
                 print('executing command {}'.format(command))
                 r = octoapi.post_command(command)
                 assert r.status_code == 204, Exception('error executing command {}: {}'.format(command, r.text))
