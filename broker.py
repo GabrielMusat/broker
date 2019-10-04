@@ -169,7 +169,8 @@ async def main():
                 'job': job,
                 'file': file,
                 'status': status
-            }
+            },
+            'settings': json.load(open('store.json'))
         })
         await asyncio.sleep(3)
 
