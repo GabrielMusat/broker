@@ -109,7 +109,7 @@ def send_instruction(data):
             wifi = 'network={\n  ssid="'+data['ssid']+'"\n  psk="'+data['psk']+'"\n}\n'
             wpa_supplicant_txt = open("/boot/octopi-wpa-supplicant.txt").read()
             open("/boot/octopi-wpa-supplicant.txt", "w").write(wifi+wpa_supplicant_txt)
-            print(f"wifi network added: {data['ssid']}, {data['psk']}")
+            print("wifi network added: {}, {}".format(data['ssid'], data['psk']))
             return 'ok'
         else:
             raise Exception('instruction {} not understood'.format(data['instruction']))
