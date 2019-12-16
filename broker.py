@@ -86,6 +86,14 @@ def send_instruction(data):
                 assert r.status_code == 204, Exception('error executing command {}: {}'.format(command, r.text))
             print('load ok')
             return 'ok'
+
+        elif data['instruction'] == 'wifi':
+            print("adding new wifi connection...")
+            wifi = 'network={\n  ssid="'+data['ssid']+'"\n  psk="'+data['psk']+'"\n}\n'
+            wpa_supplicant_txt = open("/boot/octopi-wpa-supplicant.txt").read()
+            open("/boot/octopi-wpa-supplicant.txt", "w").write(wifi+wpa_supplicant_txt)
+            print(f"wifi network added: {data['ssid']}, {data['psk']}")
+            return 'ok'
         else:
             raise Exception('instruction {} not understood'.format(data['instruction']))
 

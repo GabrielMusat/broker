@@ -2,3 +2,4 @@ requests
 python-socketio
 aiohttp
 websockets
+wpa_supplicant

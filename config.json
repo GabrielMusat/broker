@@ -2,5 +2,9 @@
     "OctoAPI_KEY": "",
     "OctoPrint_URL": "http://localhost",
     "url": "http://beast.local:8000",
-    "gcodes_folder": "/home/pi/.octoprint/uploads"
+    "gcodes_folder": "/home/pi/.octoprint/uploads",
+    "wifi": {
+        "ssid": null,
+        "password": null
+    }
 }

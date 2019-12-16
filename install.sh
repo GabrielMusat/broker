@@ -13,9 +13,8 @@ cd /home/pi/broker
 
 sudo apt update
 
-sudo apt install python3-pip -y
+sudo apt install python3-pip python3-venv dbus libdbus-glib-1-dev libdbus-1-dev python-dbus -y
 
-sudo apt install python3-venv -y
 
 python3 -m venv venv
 
