@@ -1,10 +1,20 @@
 #!/bin/sh
 
+if [[ $# -eq 2 ]]
+    then
+        echo "username will be $1"
+        echo "password will be $2"
+    else
+        echo "username and password must be provided as arguments"
+        exit 1
+fi
+
+cd /home/pi/broker
+
 sudo apt update
 
-sudo apt install python3-pip -y
+sudo apt install python3-pip python3-venv dbus libdbus-glib-1-dev libdbus-1-dev python-dbus -y
 
-sudo apt install python3-venv -y
 
 python3 -m venv venv
 
@@ -14,9 +24,9 @@ pip3 install -r requirements.txt
 
 echo "
 #!/usr/bin/env bash
-source /home/pi/broker/venv/bin/activate
 cd /home/pi/broker
-python3 broker.py
+source venv/bin/activate
+python3 broker.py $1 $2
 " > broker.sh
 
 sudo chmod +x broker.sh
@@ -30,10 +40,10 @@ sudo echo "
 [Unit]
 Description=broker
 [Service]
-User=pi
+User=root
 ExecStart=/bin/bash /bin/broker
 Restart=on-failure
-WorkingDirectory=/home/pi/broker
+WorkingDirectory=/
 StandardOutput=syslog
 StandardError=syslog
 [Install]
