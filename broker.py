@@ -3,6 +3,7 @@
 
 import requests
 import json
+import os
 import octoapi as octoapi
 import time
 
@@ -17,6 +18,8 @@ gcodes_folder = config['gcodes_folder']
 
 def retrieve_file(filename):
     params = {'filename': filename}
+    if os.path.isfile(gcodes_folder+'/'+filename):
+        return
     r = requests.get(Artenea_URL + '/download', params=params, auth=(username, password), stream=True)
     with open(gcodes_folder + '/' + filename, 'wb') as f:
         for chunk in r.iter_content(chunk_size=1024):
